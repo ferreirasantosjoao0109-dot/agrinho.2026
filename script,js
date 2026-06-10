@@ -1,1 +1,132 @@
+// Questões do quiz sobre sustentabilidade e agrotóxicos
+const perguntas = [
+    {
+        pergunta: "Qual é um dos principais impactos do uso excessivo de agrotóxicos no meio ambiente?",
+        alternativas: ["Aumento da biodiversidade", "Contaminação do solo e da água", "Melhora da qualidade do ar", "Redução do efeito estufa"],
+        correta: 1
+    },
+    {
+        pergunta: "Qual alternativa é considerada uma prática sustentável para reduzir o uso de agrotóxicos?",
+        alternativas: ["Uso intensivo de produtos químicos", "Monocultura extensiva", "Controle biológico de pragas", "Queimadas para limpeza do solo"],
+        correta: 2
+    },
+    {
+        pergunta: "O que a agricultura orgânica prioriza?",
+        alternativas: ["Máximos rendimentos com qualquer custo", "Produtos transgênicos", "Ausência de agrotóxicos sintéticos", "Grandes áreas de desmatamento"],
+        correta: 2
+    },
+    {
+        pergunta: "Como os agrotóxicos podem afetar a saúde humana?",
+        alternativas: ["Fortalecem o sistema imunológico", "Podem causar intoxicações e doenças graves", "Melhoram a qualidade dos alimentos", "Não oferecem riscos"],
+        correta: 1
+    },
+    {
+        pergunta: "Qual frase representa o tema do concurso Agrinho 2026?",
+        alternativas: ["Agro forte, futuro sustentável", "Tecnologia apenas", "Desmatamento é necessário", "Agrotóxicos sempre"],
+        correta: 0
+    }
+];
 
+// Função para carregar o quiz dinamicamente
+function carregarQuiz() {
+    const container = document.getElementById("quiz-container");
+    container.innerHTML = "";
+    
+    perguntas.forEach((item, indice) => {
+        const divPergunta = document.createElement("div");
+        divPergunta.classList.add("pergunta");
+        divPergunta.setAttribute("data-pergunta", indice);
+        
+        const textoPergunta = document.createElement("p");
+        textoPergunta.innerText = `${indice+1}. ${item.pergunta}`;
+        divPergunta.appendChild(textoPergunta);
+        
+        item.alternativas.forEach((alt, idx) => {
+            const label = document.createElement("label");
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.name = `pergunta${indice}`;
+            radio.value = idx;
+            label.appendChild(radio);
+            label.appendChild(document.createTextNode(` ${alt}`));
+            divPergunta.appendChild(label);
+            divPergunta.appendChild(document.createElement("br"));
+        });
+        
+        container.appendChild(divPergunta);
+    });
+}
+
+// Função para corrigir o quiz
+function corrigirQuiz() {
+    let acertos = 0;
+    
+    perguntas.forEach((item, indice) => {
+        const radios = document.querySelectorAll(`input[name="pergunta${indice}"]`);
+        let selecionado = null;
+        
+        radios.forEach(radio => {
+            if (radio.checked) {
+                selecionado = parseInt(radio.value);
+            }
+        });
+        
+        if (selecionado === item.correta) {
+            acertos++;
+        }
+    });
+    
+    const resultadoDiv = document.getElementById("resultado-quiz");
+    const total = perguntas.length;
+    let mensagem = "";
+    
+    if (acertos === total) {
+        mensagem = "🌟 Excelente! Você é um defensor da sustentabilidade! Continue assim!";
+    } else if (acertos >= 3) {
+        mensagem = "🌱 Bom trabalho! Estude mais um pouco e você se tornará um especialista!";
+    } else {
+        mensagem = "📚 Que tal revisar as soluções sustentáveis? Tente o quiz novamente!";
+    }
+    
+    resultadoDiv.innerHTML = `Você acertou ${acertos} de ${total} perguntas. <br> ${mensagem}`;
+}
+
+// Funções de acessibilidade
+function configurarAcessibilidade() {
+    const body = document.body;
+    const aumentar = document.getElementById("aumentarFonte");
+    const diminuir = document.getElementById("diminuirFonte");
+    const contraste = document.getElementById("altoContraste");
+    
+    let tamanhoAtual = "normal";
+    
+    aumentar.addEventListener("click", () => {
+        if (tamanhoAtual !== "grande") {
+            body.classList.remove("fonte-pequena");
+            body.classList.add("fonte-grande");
+            tamanhoAtual = "grande";
+        }
+    });
+    
+    diminuir.addEventListener("click", () => {
+        if (tamanhoAtual !== "pequena") {
+            body.classList.remove("fonte-grande");
+            body.classList.add("fonte-pequena");
+            tamanhoAtual = "pequena";
+        }
+    });
+    
+    contraste.addEventListener("click", () => {
+        body.classList.toggle("alto-contraste");
+    });
+}
+
+// Inicialização ao carregar a página
+document.addEventListener("DOMContentLoaded", () => {
+    carregarQuiz();
+    const botaoEnviar = document.getElementById("enviarQuiz");
+    if (botaoEnviar) {
+        botaoEnviar.addEventListener("click", corrigirQuiz);
+    }
+    configurarAcessibilidade();
+});
